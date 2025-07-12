@@ -1,5 +1,6 @@
 flask
 Pillow
 flask_cors
-googletrans==4.0.0-rc1
 google-generativeai
+python-dotenv
+requests

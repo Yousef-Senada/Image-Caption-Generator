@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 import google.generativeai as genai
-from googletrans import Translator
 from PIL import Image
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import io
+import requests
+import json
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -14,7 +16,26 @@ CORS(app)
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel(model_name="gemini-2.5-pro")
 
-translator = Translator()
+def translate_text(text, target_lang='ar'):
+    """Simple translation using Google Translate API (free tier)"""
+    try:
+        url = "https://translate.googleapis.com/translate_a/single"
+        params = {
+            'client': 'gtx',
+            'sl': 'en',
+            'tl': target_lang,
+            'dt': 't',
+            'q': text
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            # Extract translated text from response
+            translated = response.json()[0][0][0]
+            return translated
+        else:
+            return text  # Return original text if translation fails
+    except Exception:
+        return text  # Return original text if translation fails
 
 @app.route('/caption', methods=['POST'])
 def caption_image():
@@ -37,7 +58,7 @@ def caption_image():
         if caption_en.startswith('"') and caption_en.endswith('"'):
             caption_en = caption_en[1:-1]
         
-        caption_ar = translator.translate(caption_en, dest='ar').text
+        caption_ar = translate_text(caption_en, 'ar')
 
         return jsonify({
             "captionText": caption_en,
@@ -46,6 +67,10 @@ def caption_image():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

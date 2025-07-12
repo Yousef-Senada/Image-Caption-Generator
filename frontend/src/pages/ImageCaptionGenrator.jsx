@@ -13,6 +13,7 @@ export default function ImageCaptionGenerator() {
     const [dragActive, setDragActive] = useState(false);
     const [translated, setTranslated] = useState(false);
     const [loadingTranslations, setLoadingTranslations] = useState(false);
+    const api = import.meta.env.VITE_APP_API_URL;
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -34,7 +35,7 @@ export default function ImageCaptionGenerator() {
             const formData = new FormData();
             formData.append("image", file);
 
-            const response = await fetch("http://127.0.0.1:5000/caption", {
+            const response = await fetch(api, {
                 method: "POST",
                 body: formData,
             });
