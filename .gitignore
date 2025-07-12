@@ -1,0 +1,36 @@
+# === Vite / Frontend ===
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+.vite
+
+# === Flask / Backend ===
+__pycache__/
+*.py[cod]
+instance/
+*.sqlite3
+*.log
+env/
+venv/
+.env
+
+# === OS system files ===
+.DS_Store
+Thumbs.db
+
+# === Vercel files ===
+.vercel
+
+# === IDEs ===
+.vscode/
+.idea/
+*.swp
+
+# === Test / Coverage ===
+coverage/
+*.cover
+*.py,cover
+.hypothesis/
+pytest_cache/
